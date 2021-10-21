@@ -1,4 +1,8 @@
+from random import random
 import sys
+from generadorAcordesMelodias import generadorAcordes_Melodias
+
+from generar_bateria import generadorBateria
 import pygame 
 from pygame import mixer 
 import random
@@ -8,6 +12,20 @@ size = 800, 600
 sonido_hihat = mixer.Sound(r'./hihat.ogg')
 sonido_snare = mixer.Sound(r'./snare.ogg')
 sonido_kick = mixer.Sound(r'./kick.ogg')
+NOTAS = {}
+NOTAS['DO'] = mixer.Sound(r'./notas/DO.wav')
+NOTAS['DO#'] = mixer.Sound(r'./notas/DO#.wav')
+NOTAS['FA'] = mixer.Sound(r'./notas/FA.wav')
+NOTAS['FA#'] = mixer.Sound(r'./notas/FA#.wav')
+NOTAS['LA'] = mixer.Sound(r'./notas/LA.wav')
+NOTAS['LA#'] = mixer.Sound(r'./notas/LA#.wav')
+NOTAS['MI'] = mixer.Sound(r'./notas/MI.wav')
+NOTAS['RE'] = mixer.Sound(r'./notas/RE.wav')
+NOTAS['RE#'] = mixer.Sound(r'./notas/RE#.wav')
+NOTAS['SI'] = mixer.Sound(r'./notas/SI.wav')
+NOTAS['SOL'] = mixer.Sound(r'./notas/SOL.wav')
+NOTAS['SOL#'] = mixer.Sound(r'./notas/SOL#.wav')
+
 # screen = pygame.display.set_mode(size)
 # pygame.display.set_caption("Generador de ritmo")
 run = True
@@ -18,30 +36,17 @@ beatFullCount = 0
 halfBeatFullCount = 0
 quaterBeatFullCount = 0
 BPM = int(input("ingrese los bpm: "))
+notes = ['DO', 'DO#', 'RE', 'RE#', 'MI', 'FA', 'FA#', 'SOL', 'SOL#', 'LA', 'LA#', 'SI']
+
 beatInterval = (60/BPM)*1000
 halfBeatInterval = beatInterval / 2
 quaterBeatInterval = beatInterval / 4
 
-cl = [random.randint(3,4), 4]
-print(str(cl))
+clave, filler, metrica, opcion, subdivision_clave = generadorBateria() 
+escala, listAcordes, melody, armony =generadorAcordes_Melodias(subdivision_clave)
 
-opciones = [1,2,4]
-opcion = random.choice(opciones)
-subdivision_clave = opcion * cl[0]
-print(str(subdivision_clave))
-
-clave = []
-filler = []
-metrica = []
-
-for i in range(0, subdivision_clave):
-    clave.append(random.randint(0,1))
-    filler.append(random.randint(0,1))
-    metrica.append(random.randint(0,1))
-
-print("clave: " + str(clave))
-print("filler: " + str(filler))
-print("metrica: " + str(metrica))
+print('melodia: ' + str(melody))
+print('acordes: ' + str(armony))
 
 while run:
     beatFull = False
@@ -63,6 +68,13 @@ while run:
                 sonido_snare.play()
             if metrica[beatFullCount % subdivision_clave] == 1:
                 sonido_hihat.play()
+            #melodia
+            NOTAS[notes[melody[beatFullCount % subdivision_clave]]].play()
+            #armonia
+            NOTAS[listAcordes[armony[beatFullCount % subdivision_clave]][0]].play()
+            NOTAS[listAcordes[armony[beatFullCount % subdivision_clave]][1]].play()
+            NOTAS[listAcordes[armony[beatFullCount % subdivision_clave]][2]].play()
+            
             # print("Full Beat")
 
     if opcion == 2:
@@ -76,6 +88,12 @@ while run:
                 sonido_snare.play()
             if metrica[halfBeatFullCount % subdivision_clave] == 1:
                 sonido_hihat.play()
+            #melodia
+            NOTAS[notes[melody[halfBeatFullCount % subdivision_clave]]].play()
+            #armonia
+            NOTAS[listAcordes[armony[halfBeatFullCount % subdivision_clave]][0]].play()
+            NOTAS[listAcordes[armony[halfBeatFullCount % subdivision_clave]][1]].play()
+            NOTAS[listAcordes[armony[halfBeatFullCount % subdivision_clave]][2]].play()
             # print("Half Beat")
 
     if opcion == 4:
@@ -89,6 +107,12 @@ while run:
                 sonido_snare.play()
             if metrica[quaterBeatFullCount % subdivision_clave] == 1:
                 sonido_hihat.play()
+            #melodia
+            NOTAS[notes[melody[quaterBeatFullCount % subdivision_clave]]].play()
+            #armonia
+            NOTAS[listAcordes[armony[quaterBeatFullCount % subdivision_clave]][0]].play()
+            NOTAS[listAcordes[armony[quaterBeatFullCount % subdivision_clave]][1]].play()
+            NOTAS[listAcordes[armony[quaterBeatFullCount % subdivision_clave]][2]].play()
             # print("Quater Beat")
 
     for event in pygame.event.get():
@@ -97,3 +121,21 @@ while run:
 pygame.quit()
 
 
+#primera es tonica
+#cuarta es subdominante
+#quita es dominante
+
+#Acorde y melodia
+#Acordes solo necesito los de arriba
+#Acordes, debe ser una lista del mismo tamaño, ya sea negras, corcheas o semicorcheas
+'''
+acordes = [0,1,2]
+lista de acordes a tocar = [1,2,0,1,1,0,1,2,3]
+'''
+
+#melodia puedo usar cualquier nota, siempre y cuando esten en la escala de mi clave
+#generar una lista, ya sea de negras, corcheas o semicorchear, que se recorra a trabes de un digito del mismo tamaño.
+'''
+escala = [0,1,2,3,4,5,6]
+
+'''
